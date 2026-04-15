@@ -1,0 +1,86 @@
+@model FoodBankApp.Models.ItemUpsertViewModel
+@{
+    ViewData["Title"] = "Edit Item";
+}
+
+<div class="container mt-4" style="max-width: 720px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Edit Item</h3>
+        <a class="btn btn-outline-secondary" asp-action="Index">Back</a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ItemId" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <div class="ratio ratio-1x1 rounded-4 overflow-hidden border bg-light">
+                    <img id="itemImagePreview"
+                         src="@Url.Content(Model.ImagePath ?? "/images/items/default.png")"
+                         alt="Item photo preview"
+                         class="w-100 h-100 object-fit-cover" />
+                </div>
+
+                <label asp-for="ImageFile" class="form-label mt-2"></label>
+                <input asp-for="ImageFile" class="form-control" type="file" accept="image/*" />
+                <div class="form-text">Upload a new photo to replace the current one (max 5MB).</div>
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-8">
+                <div class="mb-3">
+                    <label asp-for="ItemName" class="form-label"></label>
+                    <input asp-for="ItemName" class="form-control" />
+                    <span asp-validation-for="ItemName" class="text-danger"></span>
+                </div>
+
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label"></label>
+            <input asp-for="Category" class="form-control" />
+            <span asp-validation-for="Category" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="StockQuantity" class="form-label"></label>
+            <input asp-for="StockQuantity" class="form-control" type="number" min="0" />
+            <span asp-validation-for="StockQuantity" class="text-danger"></span>
+            <div class="form-text">Tip: use <strong>Add Stock</strong> for quick increases.</div>
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+            <label asp-for="IsActive" class="form-check-label"></label>
+        </div>
+
+                <div class="d-grid d-md-flex gap-2">
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const input = document.getElementById('ImageFile');
+            const preview = document.getElementById('itemImagePreview');
+            if (!input || !preview) return;
+            input.addEventListener('change', function () {
+                const file = input.files && input.files[0];
+                if (!file) return;
+                const url = URL.createObjectURL(file);
+                preview.src = url;
+            });
+        })();
+    </script>
+}

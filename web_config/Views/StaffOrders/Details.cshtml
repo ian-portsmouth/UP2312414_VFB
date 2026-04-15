@@ -1,0 +1,76 @@
+@model FoodBankApp.Models.StaffOrderDetailsViewModel
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container mt-4">
+
+    
+    @if (TempData["Flash"] is string flash)
+    {
+        <div class="alert alert-success">@flash</div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Order @Model.OrderCode</h3>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to Orders</a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div><strong>Name:</strong> @Model.ContactName</div>
+            <div><strong>Date:</strong> @Model.DateCreated.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</div>
+
+            <div class="mb-2">
+                <strong>Status:</strong>
+                @if (Model.Status?.Equals("Completed", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    <span class="badge bg-success">Completed</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark">@Model.Status</span>
+                }
+            </div>
+
+            
+            @if (!(Model.Status?.Equals("Completed", StringComparison.OrdinalIgnoreCase) ?? false))
+            {
+                <form asp-action="Complete" method="post" class="mt-2">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.OrderId" />
+                    <button class="btn btn-success">Mark as Completed</button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="table-responsive">
+    <table class="table table-bordered align-middle bg-white">
+        <thead>
+            <tr>
+                <th style="width:72px"></th>
+                <th>Item</th>
+                <th style="width:140px">Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var l in Model.Lines)
+        {
+            <tr>
+                <td>
+                    <img src="@Url.Content(l.ImagePath ?? "/images/items/default.png")"
+                         alt="@l.ItemName"
+                         class="rounded-3 border"
+                         style="width:56px;height:56px;object-fit:cover;" />
+                </td>
+                <td>
+                    <div class="fw-semibold">@l.ItemName</div>
+                </td>
+                <td>@l.Quantity</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    </div>
+</div>

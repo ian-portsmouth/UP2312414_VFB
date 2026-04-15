@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container mt-4">
+    <div class="row g-4 align-items-stretch">
+        <div class="col-12 col-lg-7">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4 p-md-5">
+                    <h1 class="display-6 fw-bold mb-2">Victorycare Foodbank</h1>
+                    <p class="text-muted mb-4">
+                        Please place an order from the available stock.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-primary btn-lg" asp-controller="PublicOrders" asp-action="Create">
+                            Place an order
+                        </a>
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <a class="btn btn-outline-primary btn-lg" asp-controller="Stock" asp-action="Index">
+                                Go to staff portal
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-outline-secondary btn-lg" asp-controller="Account" asp-action="Login">
+                                Staff login
+                            </a>
+                        }
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <div class="p-3 rounded-4 bg-light border h-100">
+                                <div class="fw-semibold">Fast ordering</div>
+                                <div class="text-muted small">Tap items, set quantities, and submit.</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="p-3 rounded-4 bg-light border h-100">
+                                <div class="fw-semibold">Live stock</div>
+                                <div class="text-muted small">Availability comes straight from the database.</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="p-3 rounded-4 bg-light border h-100">
+                                <div class="fw-semibold">Item photos</div>
+                                <div class="text-muted small">Staff can upload an image per item.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-semibold mb-3">How it works</h5>
+                    <ol class="mb-0 text-muted">
+                        <li class="mb-2">Go to <strong>Place Order</strong> and choose items.</li>
+                        <li class="mb-2">Submit your order to generate an order code.</li>
+                        <li class="mb-2">Staff can view orders and mark them complete.</li>
+                        <li>Staff can manage stock and upload item photos.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

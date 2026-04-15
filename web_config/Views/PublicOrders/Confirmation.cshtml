@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<div class="container mt-5 text-center">
+    <h2 class="mb-3">Thank You, @ViewBag.ContactName!</h2>
+
+    @if (string.IsNullOrEmpty(ViewBag.OrderCode as string))
+    {
+        <div class="alert alert-danger">
+            Sorry, there was a problem creating your order. Please try again later.
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success p-4">
+            <h4>Your order has been placed successfully!</h4>
+            <p class="mt-3">
+                Your order number is: <strong>@ViewBag.OrderCode</strong>
+            </p>
+            <p>Please keep your order number. Staff will use it to process your order.</p>
+        </div>
+    }
+
+    <a asp-action="Create" class="btn btn-outline-primary mt-4">Place Another Order</a>
+</div>
