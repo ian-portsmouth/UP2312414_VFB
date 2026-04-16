@@ -1,0 +1,103 @@
+trigger:
+  branches:
+    include:
+      - master
+# Personal Self-hosted agent pool
+pool:
+  name: 'vcbf'
+
+stages:
+
+# Build stage
+
+- stage: BuildApply
+  displayName: 'Build & Apply Infrastructure'
+  jobs:
+    - job: ApplyJob
+      displayName: 'Terraform Apply'
+      steps:
+
+        - script: echo Build Pipeline!
+          displayName: 'Build Pipeline'
+
+        - script: |
+            echo Build Pipeline.
+          displayName: 'Multi-line script'
+
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
+
+        - task: TerraformTask@5
+          displayName: 'Terraform INIT'
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            backendServiceArm: 'VFB_connector'
+            backendAzureRmResourceGroupName: 'rg-vcbf-state'
+            backendAzureRmStorageAccountName: 'stvfb19022026'
+            backendAzureRmContainerName: 'vcbf-state'
+            backendAzureRmKey: '$(terraformBackendKey)'
+            workingDirectory: '.'
+
+        - task: TerraformTask@5
+          displayName: 'Terraform PLAN'
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            environmentServiceNameAzureRM: 'VFB_connector'
+            workingDirectory: '.'
+
+        - task: TerraformTask@5
+          displayName: 'Terraform APPLY'
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            environmentServiceNameAzureRM: 'VFB_connector'
+            workingDirectory: '.'
+
+
+
+# Destroy stage  
+
+- stage: Destroy
+  displayName: 'Destroy Infrastructure'
+  dependsOn: BuildApply
+  condition: succeeded()   
+  jobs:
+    - deployment: DestroyJob
+      displayName: 'Terraform Destroy'
+      environment: 
+        name: 'Decommission'       
+        # approval for deletion of the infrastructure
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+
+            
+          
+              - task: TerraformInstaller@1
+                displayName: 'Install Terraform'
+                inputs:
+                  terraformVersion: 'latest'
+
+              - task: TerraformTask@5
+                displayName: 'Terraform INIT'
+                inputs:
+                  provider: 'azurerm'
+                  command: 'init'
+                  backendServiceArm: 'VFB_connector'
+                  backendAzureRmResourceGroupName: 'rg-vcbf-state'
+                  backendAzureRmStorageAccountName: 'stvfb19022026'
+                  backendAzureRmContainerName: 'vcbf-state'
+                  backendAzureRmKey: '$(terraformBackendKey)'
+                  workingDirectory: '.'
+
+              - task: TerraformTask@5
+                displayName: 'Terraform DESTROY'
+                inputs:
+                  provider: 'azurerm'
+                  command: 'destroy'
+                  environmentServiceNameAzureRM: 'VFB_connector'
+                  workingDirectory: '.'
